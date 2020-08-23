@@ -1,0 +1,22 @@
+# Installing packages
+install.packages("vegan")
+library(vegan)
+library(ggplot2)
+
+# Setting up the data matrix
+set.seed(2)
+data <- PCA1_Sheet10
+na.omit(data)
+community_matrix <- as.matrix(data)
+head(community_matrix)
+dim(community_matrix)
+
+# Stressplot
+NMDS_Sheet10 <- metaMDS(community_matrix, k=2)
+stressplot(NMDS_Sheet10)
+
+# NMDS
+plot(NMDS_Sheet10)
+ordiplot(NMDS_Sheet10,type="n")
+orditorp(NMDS_Sheet10,display="species",cex=1,col="red",air=0.01)
+orditorp(NMDS_Sheet10,display="sites",cex=1.25,air=0.01)
