@@ -2,10 +2,11 @@
 install.packages("vegan")
 library(vegan)
 library(ggplot2)
+library(dplyr)
 
 # Setting up the data matrix
-set.seed(2)
-data <- PCA1_Sheet10
+set.seed(69)
+data <- All_Calcite_Sheet1_4
 na.omit(data)
 community_matrix <- as.matrix(data)
 head(community_matrix)
@@ -18,5 +19,27 @@ stressplot(NMDS_Sheet10)
 # NMDS
 plot(NMDS_Sheet10)
 ordiplot(NMDS_Sheet10,type="n")
-orditorp(NMDS_Sheet10,display="species",cex=1,col="red",air=0.01)
-orditorp(NMDS_Sheet10,display="sites",cex=1.25,air=0.01)
+orditorp(NMDS_Sheet10,display="species",cex=0.5,col="red",air=0.01)
+orditorp(NMDS_Sheet10,display="sites",cex=0.5,air=0.01)
+
+# EnvFit
+env = data[1:9]
+en = envfit(NMDS_Sheet10, env, permutations = 999, na.rm = TRUE)
+print(en)
+
+# Adonis
+phylum <- Calcite_Phylum_Sheet1_5
+phylum_g <- grouping(phylum)
+adon.results <- adonis(formula = data ~ phylum_g, permutations = 999, method = "bray")
+print(adon.results)
+
+# BetaDisper
+dis <- vegdist(data, method  ="bray", binary = FALSE, diag = FALSE, upper = FALSE, na.rm = FALSE)
+mod <- betadisper(d = dis, group = phylum_g)
+anov <- anova(mod)
+print(anov)
+
+# Permutest
+pmod <- permutest(mod, permutations = 99, pairwise = TRUE)
+print(pmod)
+
